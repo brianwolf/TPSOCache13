@@ -308,25 +308,27 @@ int ejecutarAlgoritmo(int* nroPagina,int pid,bool* estaModificada){
 	//quitarAccesoTLB(nroPaginaAReemplazar,pid);
 	}
 
+	loguearColaDeAlgoritmo(tablaDePaginas);
+
 	return dondeEstaEnRam;
 }
 
 void loguearColaDeAlgoritmo(tipoTablaPaginas* tabla){
-	log_trace(datosMemoria->logDeAlgoritmos,"Cola de algoritmo del proceso %d:", tabla->pid);
+	log_trace(datosMemoria->logDeAlgoritmos,"COLA DE ALGORITMO DEL PROCESO %d:", tabla->pid);
 
 	int i;
 	for (i = 0; i < list_size(tabla->listaParaAlgoritmo); ++i) {
 
-		int aux = (int)(*(int*)list_get(tabla->listaParaAlgoritmo,i));
-		log_trace(datosMemoria->logDeAlgoritmos,"%d", aux);
+		int* aux = list_get(tabla->listaParaAlgoritmo,i);
+		log_trace(datosMemoria->logDeAlgoritmos,"%d", *aux);
 
-		if(datosMemoria->tipoDeAlgoritmoRAM == CLOCK_MODIFICADO){
-			tipoPagina* pagina = list_get(tabla->frames, aux);
+		if(datosMemoria->tipoDeAlgoritmoRAM == CLOCK_MODIFICADO&&*aux>=0){
+			tipoPagina* pagina = list_get(tabla->frames, *aux);
 
-			log_trace(datosMemoria->logDeAlgoritmos,"Modificado:%d | Uso:%d", pagina->modificado, pagina->usado);
+			log_trace(datosMemoria->logDeAlgoritmos,"M:%d | U:%d", pagina->modificado, pagina->usado);
 		}
 	}
-	log_trace(datosMemoria->logDeAlgoritmos,"Puntero: %d", tabla->punteroParaAlgoritmo);
+	log_trace(datosMemoria->logDeAlgoritmos,"PUNTERO: %d", tabla->punteroParaAlgoritmo);
 }
 
 /*void agregarAccesoPorFIFO(int nroPagina,int pid){

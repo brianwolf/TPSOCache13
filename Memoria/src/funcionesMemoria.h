@@ -112,6 +112,8 @@ void destruirProceso(int pid);//Borra el proceso del sistema
 
 double porcentajeDePageFaults(int pid);
 
+int pageFaults(int pid);
+
 double tasaAciertosTLB();//Retorna la tasa de aciertos de tlb en %
 
 void dormirPorAccesoARAM();
@@ -123,5 +125,7 @@ bool puedoReservarEnSWAP(tipoInstruccion* instruccion, tipoRespuesta** respuesta
 bool instruccionASwapRealizada(tipoInstruccion* instruccion,tipoRespuesta** respuesta) ;
 
 void volcarRamALog();
+
+void terminarLogs();
 
 #endif /* FUNCIONESMEMORIA_H_ */
