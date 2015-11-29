@@ -26,23 +26,23 @@ endif
 all: Memoria
 
 dependents:
-	-cd /home/brian/git/tp-2015-2c-los-javimancos/commonsDeAsedio/Debug && $(MAKE) all
+	-cd /home/utnso/git/TPSORespaldo/commonsDeAsedio/Debug && $(MAKE) all
 
 # Tool invocations
-Memoria: $(OBJS) $(USER_OBJS) /home/brian/git/tp-2015-2c-los-javimancos/commonsDeAsedio/Debug/libcommonsDeAsedio.so
+Memoria: $(OBJS) $(USER_OBJS) /home/utnso/git/TPSORespaldo/commonsDeAsedio/Debug/libcommonsDeAsedio.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/brian/git/tp-2015-2c-los-javimancos/commonsDeAsedio/Debug" -o "Memoria" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/git/TPSORespaldo/commonsDeAsedio/Debug" -o "Memoria" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) Memoria
+	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) Memoria
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/brian/git/tp-2015-2c-los-javimancos/commonsDeAsedio/Debug/libcommonsDeAsedio.so:
+/home/utnso/git/TPSORespaldo/commonsDeAsedio/Debug/libcommonsDeAsedio.so:
 
 -include ../makefile.targets
