@@ -84,7 +84,7 @@ void tratarPeticion(int cpuAtendida) {
 	destruirTipoRespuesta(respuesta);
 
 	//SEÑALES
-	tratarSenial();
+	//tratarSenial();
 }
 
 tipoRespuesta* quitarProceso(tipoInstruccion* instruccion){
@@ -411,7 +411,7 @@ return posicionDeTabla;
 }
 
 int traerPaginaDesdeSwap(tipoInstruccion* instruccion, tipoRespuesta** respuesta) {
-
+printf("\nentre en traer desde Swap\n");
 	//instruccion.instruccion = LEER;
 
 	int posicionEnRam = -1;
@@ -428,7 +428,7 @@ int traerPaginaDesdeSwap(tipoInstruccion* instruccion, tipoRespuesta** respuesta
 	else{
 		log_error(datosMemoria->logDeSwapeo,"FALLO DE LECTURA DE LA PAGINA %d DEL PROCESO %d EN SWAP",instruccion->nroPagina,instruccion->pid);
 	}
-
+printf("sali\n\n");
 	return posicionEnRam;
 }
 
