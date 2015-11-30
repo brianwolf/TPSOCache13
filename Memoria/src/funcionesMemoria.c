@@ -84,7 +84,7 @@ void tratarPeticion(int cpuAtendida) {
 	destruirTipoRespuesta(respuesta);
 
 	//SEÑALES
-	tratarSenial();
+	//tratarSenial();
 }
 
 tipoRespuesta* quitarProceso(tipoInstruccion* instruccion){

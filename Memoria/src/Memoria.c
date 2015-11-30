@@ -98,8 +98,8 @@ int main(void) {
 
 
 	//SEÑALES
-	//pthread_t hiloSeniales;
-	//crearThread(&hiloSeniales,crearSeniales,NULL);
+	pthread_t hiloSeniales;
+	crearThread(&hiloSeniales,crearSeniales,NULL);
 /////////////////////////////////////////////////////////////////////////////////////
 
 	pantallaDeInicio();
@@ -107,9 +107,9 @@ int main(void) {
 	while(memoriaActiva){
 
 		//SEÑALES no esoty usando el hilo
-		signal(SIGUSR1, prepararSenialLimpiarTLB);
+		/*signal(SIGUSR1, prepararSenialLimpiarTLB);
 		signal(SIGUSR2, prepararSenialLimpiarRAM);
-		signal(SIGPOLL, prepararSenialVolcarRamALog);
+		signal(SIGPOLL, prepararSenialVolcarRamALog);*/
 
 		listaFiltrada = listaPrincipal;
 		select(datosMemoria->maximoSocket+1,&listaFiltrada,NULL,NULL,NULL);
@@ -118,7 +118,7 @@ int main(void) {
 		for (var = 0; var <= datosMemoria->maximoSocket; var++) {
 
 			//SEÑALES
-			//tratarSenial();
+			tratarSenial();
 
 			if(FD_ISSET(var, &listaFiltrada)){
 

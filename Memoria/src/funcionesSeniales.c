@@ -5,26 +5,28 @@ extern t_list* listaSeniales;
 extern void crearHijoYPadre();
 
 void tratarSenial(){
+	int tamanioListaSeniales = list_size(listaSeniales);
+	if (tamanioListaSeniales== 0) return;
+	int* opcionSignalElegida;
 
-	if (list_is_empty(listaSeniales)) return;
+	int var;
+	for (var = 0; var < tamanioListaSeniales; ++var) {
+		opcionSignalElegida = list_get(listaSeniales,0);
 
-	int* opcionSignalElegida = list_get(listaSeniales,0);
-
-	switch(*opcionSignalElegida){
+		switch(*opcionSignalElegida){
 		case 1:
 			limpiarTLB();
 			break;
-
 		case 2:
 			limpiarRam();
 			break;
-
 		case 3:
 			crearHijoYPadre();
 			break;
-	}
+		}
 
-	list_remove_and_destroy_element(listaSeniales, 0, free);
+		list_remove_and_destroy_element(listaSeniales, 0, free);
+	}
 }
 
 void prepararSenialLimpiarTLB(int signal){
