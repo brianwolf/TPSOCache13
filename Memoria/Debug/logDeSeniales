@@ -1,0 +1,153 @@
+[TRACE] 20:11:10:442 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:11:10:442 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:11:17:407 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:11:17:407 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:11:25:614 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:11:28:914 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:11:28:914 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:11:31:697 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:11:31:698 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:11:31:698 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:11:31:698 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:11:36:848 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:11:36:848 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:11:41:866 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:11:41:867 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:11:41:867 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:11:41:867 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:11:50:698 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:11:50:698 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:11:51:279 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:11:51:279 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:11:51:603 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:11:51:603 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:11:51:909 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:11:51:909 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:11:52:184 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:11:52:184 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:11:56:535 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:11:56:535 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:12:06:411 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:12:06:417 Administrador de Memoria/(11492:11535): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:12:06:420 Administrador de Memoria/(11492:11535): VOLCANDO RAM A LOG...
+[TRACE] 20:12:06:420 Administrador de Memoria/(11492:11535): FRAME 0 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 1 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 2 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 3 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 4 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 5 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 6 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 7 : 
+[TRACE] 20:12:06:421 Administrador de Memoria/(11492:11535): FRAME 8 : 
+[TRACE] 20:12:06:422 Administrador de Memoria/(11492:11535): FRAME 9 : 
+[TRACE] 20:12:10:402 Administrador de Memoria/(11492:11536): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:12:10:404 Administrador de Memoria/(11492:11536): VOLCANDO RAM A LOG...
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 0 : 11
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 1 : 4
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 2 : 222
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 3 : 
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 4 : 
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 5 : 
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 6 : 
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 7 : 
+[TRACE] 20:12:10:405 Administrador de Memoria/(11492:11536): FRAME 8 : 
+[TRACE] 20:12:10:406 Administrador de Memoria/(11492:11536): FRAME 9 : 
+[TRACE] 20:12:15:876 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:12:15:876 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:12:24:745 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:12:24:753 Administrador de Memoria/(11492:11540): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:12:24:754 Administrador de Memoria/(11492:11540): VOLCANDO RAM A LOG...
+[TRACE] 20:12:24:755 Administrador de Memoria/(11492:11540): FRAME 0 : 
+[TRACE] 20:12:24:755 Administrador de Memoria/(11492:11540): FRAME 1 : 
+[TRACE] 20:12:24:755 Administrador de Memoria/(11492:11540): FRAME 2 : 
+[TRACE] 20:12:24:756 Administrador de Memoria/(11492:11540): FRAME 3 : 
+[TRACE] 20:12:24:756 Administrador de Memoria/(11492:11540): FRAME 4 : 
+[TRACE] 20:12:24:756 Administrador de Memoria/(11492:11540): FRAME 5 : 
+[TRACE] 20:12:24:756 Administrador de Memoria/(11492:11540): FRAME 6 : 
+[TRACE] 20:12:24:756 Administrador de Memoria/(11492:11540): FRAME 7 : 
+[TRACE] 20:12:24:757 Administrador de Memoria/(11492:11540): FRAME 8 : 
+[TRACE] 20:12:24:757 Administrador de Memoria/(11492:11540): FRAME 9 : 
+[TRACE] 20:12:24:766 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:12:24:768 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:12:24:769 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:12:24:769 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:12:24:769 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:12:40:91 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:12:40:92 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:12:50:454 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:12:50:454 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:12:50:455 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:12:50:460 Administrador de Memoria/(11492:11545): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:12:50:463 Administrador de Memoria/(11492:11545): VOLCANDO RAM A LOG...
+[TRACE] 20:12:50:463 Administrador de Memoria/(11492:11545): FRAME 0 : 
+[TRACE] 20:12:50:464 Administrador de Memoria/(11492:11545): FRAME 1 : 
+[TRACE] 20:12:50:464 Administrador de Memoria/(11492:11545): FRAME 2 : 
+[TRACE] 20:12:50:464 Administrador de Memoria/(11492:11545): FRAME 3 : 
+[TRACE] 20:12:50:464 Administrador de Memoria/(11492:11545): FRAME 4 : 
+[TRACE] 20:12:50:464 Administrador de Memoria/(11492:11545): FRAME 5 : 
+[TRACE] 20:12:50:464 Administrador de Memoria/(11492:11545): FRAME 6 : 
+[TRACE] 20:12:50:464 Administrador de Memoria/(11492:11545): FRAME 7 : 
+[TRACE] 20:12:50:465 Administrador de Memoria/(11492:11545): FRAME 8 : 
+[TRACE] 20:12:50:466 Administrador de Memoria/(11492:11545): FRAME 9 : 
+[TRACE] 20:15:20:285 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:15:20:286 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:15:20:286 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:15:25:342 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:15:25:342 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:15:27:495 Administrador de Memoria/(11492:11559): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:15:27:497 Administrador de Memoria/(11492:11559): VOLCANDO RAM A LOG...
+[TRACE] 20:15:27:497 Administrador de Memoria/(11492:11559): FRAME 0 : 
+[TRACE] 20:15:27:498 Administrador de Memoria/(11492:11559): FRAME 1 : 
+[TRACE] 20:15:27:498 Administrador de Memoria/(11492:11559): FRAME 2 : 
+[TRACE] 20:15:27:498 Administrador de Memoria/(11492:11559): FRAME 3 : 
+[TRACE] 20:15:27:498 Administrador de Memoria/(11492:11559): FRAME 4 : 
+[TRACE] 20:15:27:498 Administrador de Memoria/(11492:11559): FRAME 5 : 
+[TRACE] 20:15:27:498 Administrador de Memoria/(11492:11559): FRAME 6 : 
+[TRACE] 20:15:27:499 Administrador de Memoria/(11492:11559): FRAME 7 : 
+[TRACE] 20:15:27:499 Administrador de Memoria/(11492:11559): FRAME 8 : 
+[TRACE] 20:15:27:499 Administrador de Memoria/(11492:11559): FRAME 9 : 
+[TRACE] 20:16:12:685 Administrador de Memoria/(11492:11562): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:16:12:687 Administrador de Memoria/(11492:11562): VOLCANDO RAM A LOG...
+[TRACE] 20:16:12:687 Administrador de Memoria/(11492:11562): FRAME 0 : 
+[TRACE] 20:16:12:687 Administrador de Memoria/(11492:11562): FRAME 1 : 
+[TRACE] 20:16:12:688 Administrador de Memoria/(11492:11562): FRAME 2 : 
+[TRACE] 20:16:12:688 Administrador de Memoria/(11492:11562): FRAME 3 : 
+[TRACE] 20:16:12:688 Administrador de Memoria/(11492:11562): FRAME 4 : 
+[TRACE] 20:16:12:689 Administrador de Memoria/(11492:11562): FRAME 5 : 
+[TRACE] 20:16:12:689 Administrador de Memoria/(11492:11562): FRAME 6 : 
+[TRACE] 20:16:12:689 Administrador de Memoria/(11492:11562): FRAME 7 : 
+[TRACE] 20:16:12:689 Administrador de Memoria/(11492:11562): FRAME 8 : 
+[TRACE] 20:16:12:689 Administrador de Memoria/(11492:11562): FRAME 9 : 
+[TRACE] 20:16:17:852 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:16:17:852 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:16:20:661 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:16:20:662 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:17:55:891 Administrador de Memoria/(11492:11570): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:17:55:892 Administrador de Memoria/(11492:11570): VOLCANDO RAM A LOG...
+[TRACE] 20:17:55:892 Administrador de Memoria/(11492:11570): FRAME 0 : 
+[TRACE] 20:17:55:893 Administrador de Memoria/(11492:11570): FRAME 1 : 
+[TRACE] 20:17:55:893 Administrador de Memoria/(11492:11570): FRAME 2 : 
+[TRACE] 20:17:55:893 Administrador de Memoria/(11492:11570): FRAME 3 : 
+[TRACE] 20:17:55:893 Administrador de Memoria/(11492:11570): FRAME 4 : 
+[TRACE] 20:17:55:893 Administrador de Memoria/(11492:11570): FRAME 5 : 
+[TRACE] 20:17:55:893 Administrador de Memoria/(11492:11570): FRAME 6 : 
+[TRACE] 20:17:55:894 Administrador de Memoria/(11492:11570): FRAME 7 : 
+[TRACE] 20:17:55:894 Administrador de Memoria/(11492:11570): FRAME 8 : 
+[TRACE] 20:17:55:894 Administrador de Memoria/(11492:11570): FRAME 9 : 
+[TRACE] 20:17:58:148 Administrador de Memoria/(11492:11500): SEÑAL SIGUSR1 RECIBIDA
+[TRACE] 20:17:58:148 Administrador de Memoria/(11492:11500): TLB LIMPIADA
+[TRACE] 20:18:00:314 Administrador de Memoria/(11492:11501): SEÑAL SIGUSR2 RECIBIDA
+[TRACE] 20:18:00:314 Administrador de Memoria/(11492:11501): COMENZANDO LIMPIEZA DE RAM...
+[TRACE] 20:18:00:314 Administrador de Memoria/(11492:11501): RAM LIMPIADA
+[TRACE] 20:18:03:583 Administrador de Memoria/(11492:11572): SEÑAL SIGPOLL RECIBIDA
+[TRACE] 20:18:03:584 Administrador de Memoria/(11492:11572): VOLCANDO RAM A LOG...
+[TRACE] 20:18:03:585 Administrador de Memoria/(11492:11572): FRAME 0 : 
+[TRACE] 20:18:03:586 Administrador de Memoria/(11492:11572): FRAME 1 : 
+[TRACE] 20:18:03:586 Administrador de Memoria/(11492:11572): FRAME 2 : 
+[TRACE] 20:18:03:586 Administrador de Memoria/(11492:11572): FRAME 3 : 
+[TRACE] 20:18:03:586 Administrador de Memoria/(11492:11572): FRAME 4 : 
+[TRACE] 20:18:03:586 Administrador de Memoria/(11492:11572): FRAME 5 : 
+[TRACE] 20:18:03:586 Administrador de Memoria/(11492:11572): FRAME 6 : 
+[TRACE] 20:18:03:587 Administrador de Memoria/(11492:11572): FRAME 7 : 
+[TRACE] 20:18:03:587 Administrador de Memoria/(11492:11572): FRAME 8 : 
+[TRACE] 20:18:03:587 Administrador de Memoria/(11492:11572): FRAME 9 : 

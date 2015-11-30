@@ -148,6 +148,12 @@ bool ejecutarPaso1CLOCKM(tipoTablaPaginas* tablaDePagina,int* nroPaginaAReemplaz
 
 		acceso = list_get(tablaDePagina->listaParaAlgoritmo,puntero);
 
+		if(*acceso<0){
+			puntero = 0;
+
+			break;
+		}
+
 		pagina = list_get(tablaDePagina->frames,*acceso);
 
 		if(!(pagina->usado||pagina->modificado)){
@@ -192,6 +198,12 @@ bool ejecutarPaso2CLOCKM(tipoTablaPaginas* tablaDePagina,int* nroPaginaAReemplaz
 			puntero = 0;
 
 		acceso = list_get(tablaDePagina->listaParaAlgoritmo,puntero);
+
+		if(*acceso<0){
+			puntero = 0;
+
+			break;
+		}
 
 		pagina = list_get(tablaDePagina->frames,*acceso);
 
