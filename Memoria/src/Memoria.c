@@ -118,7 +118,7 @@ int main(void) {
 		for (var = 0; var <= datosMemoria->maximoSocket; var++) {
 
 			//SEÑALES
-			tratarSenial();
+			//tratarSenial();
 
 			if(FD_ISSET(var, &listaFiltrada)){
 

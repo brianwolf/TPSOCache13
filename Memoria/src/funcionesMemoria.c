@@ -84,7 +84,7 @@ void tratarPeticion(int cpuAtendida) {
 	destruirTipoRespuesta(respuesta);
 
 	//SEÑALES
-	//tratarSenial();
+	tratarSenial();
 }
 
 tipoRespuesta* quitarProceso(tipoInstruccion* instruccion){
@@ -559,7 +559,7 @@ void agregarPaginaATLB(int nroPagina,int pid,int posicionEnRam){
 
 
 void volcarRamALog(){
-
+	printf("\nentre volcar RAM a log\n");
 	int var;
 
 	log_trace(datosMemoria->logDeSeniales,"SEÑAL SIGPOLL RECIBIDA");
@@ -573,7 +573,7 @@ void volcarRamALog(){
 
 		log_trace(datosMemoria->logDeSeniales,"FRAME %d : %s",var,pagina);
 	}
-
+printf("sali de volcar RAM a log\n\n");
 //Aca decia que hay que usar fork, pero me parece quilombo para nada
 }
 
@@ -726,7 +726,7 @@ void quitarPaginaDeRam(int posicion){
 	}
 
 void limpiarRam(){
-
+printf("\nentre a limpiar RAM\n");
 	int var;
 
 	log_trace(datosMemoria->logDeSeniales,"SEÑAL SIGUSR2 RECIBIDA");
@@ -756,7 +756,7 @@ void limpiarRam(){
 	list_clean_and_destroy_elements(datosMemoria->listaTLB,free);
 
 	log_trace(datosMemoria->logDeSeniales,"RAM LIMPIADA");
-
+printf("sali de limpiar RAM\n\n");
 }
 
 void llevarPaginasASwap(tipoTablaPaginas* tablaDePaginas){
@@ -786,11 +786,12 @@ void llevarPaginasASwap(tipoTablaPaginas* tablaDePaginas){
 }
 //señales
 void limpiarTLB(){
+printf("\nentre a limpiar TLB\n");
 	log_trace(datosMemoria->logDeSeniales,"SEÑAL SIGUSR1 RECIBIDA");
 	log_trace(datosMemoria->logDeSeniales,"TLB LIMPIADA");
 
 list_clean_and_destroy_elements(datosMemoria->listaTLB,free);
-
+printf("sali de limpiar TLB\n\n");
 }
 
 void destruirProceso(int pid){
