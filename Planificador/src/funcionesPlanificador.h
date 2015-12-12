@@ -44,7 +44,7 @@ typedef struct{
 } t_bloqueados;
 
 
-// finciones basicas -------------------------------------
+// funciones basicas -------------------------------------
 
 void inicializar_semaforos();
 int liberar_memoria();
@@ -80,7 +80,7 @@ int menu(void) ;
 
 int correr_path(void);
 
-void finalizar_PID();
+int finalizar_PID();
 
 void ps();
 

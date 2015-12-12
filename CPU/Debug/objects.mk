@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lpthread -lcommonsDeAsedio -lcommons
+LIBS := -lcommons -lcommonsDeAsedio -lpthread
 

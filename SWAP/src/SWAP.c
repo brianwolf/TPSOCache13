@@ -21,7 +21,7 @@
 
 int main(void) {
 
-	printf("Proceso SWAP iniciado\n");
+	printf(BLANCO "Proceso SWAP " VERDE "Iniciado" BLANCO ".\n" FINDETEXTO);
 
 	t_log* logger = crearLoggerParaSeguimiento("logSWAP","Administrador de SWAP");
 	logearSeguimiento("Proceso iniciado",logger);
@@ -30,7 +30,6 @@ int main(void) {
 	t_list* listaDeHuecosUtilizados = inicializarListaDeHuecosUtilizados();
 	t_list* listaDeHuecosLibres = inicializarListaDeHuecosLibres(configuracion->cantidadDePaginas);
 	inicializarParticion(configuracion->nombreDeSWAP,configuracion->tamanioDePagina,configuracion->cantidadDePaginas);
-
 
 	tipoInstruccion* instruccionAEjecutar;
 	tipoRespuesta* respuestaParaMemoria;
@@ -94,7 +93,7 @@ int main(void) {
 	
 	destruirLogger(logger);
 
-	printf("Proceso SWAP finalizado\n");
+		printf(BLANCO "\nProceso SWAP " ROJO "Finalizado" BLANCO ".\n" FINDETEXTO);
 
 
 	return EXIT_SUCCESS;

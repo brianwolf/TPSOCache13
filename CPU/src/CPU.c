@@ -1,15 +1,9 @@
 #include "funcionesCPU.h"
 
-int idCPUAAsignar = 1;
-
 int main(void)
 {
-	printf("Proceso CPU Iniciado.\n");
 	//Inicializo semaforo para esperar a que se cree el socket master para planificador antes de que se comiencen a crear hilos de CPU
 	sem_init(&semaforoConexionMasterPlanificador, 0, 0);
-
-	//Inicializo semaforo para asignar correctamente idCPU a cada hilo
-	sem_init(&semaforoHiloCPU, 0, 1);
 
 	//Inicializo semaforo para logs
 	sem_init(&semaforoLogs, 0, 1);
@@ -23,52 +17,104 @@ int main(void)
 	//Inicializo semaforo para variable compartida
 	sem_init(&semaforoContadorDeInstrucciones, 0, 1);
 
-
-	//Declaro estructura que requiere un hilo de CPU (configuracion y logs)
-	t_hiloCPU hilosCPU;
+	//Inicializo semaforo para variable compartida
+	sem_init(&semaforoTiemposDeUso, 0, 1);
 
 	//Creo el contador de instrucciones ejecutados por cada CPU
 	cantidadDeInstruccionesEjecutadasPorCPUs = list_create();
 
+	//Creo la lista de tiempos de ejecucion de CPUs
+	listaTiemposCPU = list_create();
+
 	//Carga de archivo de configuracion
-	hilosCPU.configuracionCPU = cargarArchivoDeConfiguracionDeCPU(RUTA_DE_ARCHIVO_DE_CONFIGURACION_CPU);
+	tipoConfigCPU* configuracionCPU = cargarArchivoDeConfiguracionDeCPU(RUTA_DE_ARCHIVO_DE_CONFIGURACION_CPU);
+
+	//Imprime en pantalla informacion importante
+	printf(BLANCO "Proceso CPU " VERDE "Iniciado" BLANCO ".\n" FINDETEXTO);
+	printf(BLANCO "Cantidad de Hilos: " AZUL "%i " BLANCO "Retardo: " AMARILLO "%i " BLANCO "microsegundos.\n" FINDETEXTO, configuracionCPU->cantidadDeHilos, configuracionCPU->retardo);
+	printf(AMARILLO "Esperando procesos Planificador y Administrador de Memoria.\n\n" FINDETEXTO);
 
 	//Creacion archivo de log
-	if(LOGS_ACTIVADOS == 1)
-	{
-		hilosCPU.logCPU = log_create(RUTA_DE_ARCHIVO_DE_LOGS_CPU, "CPU", 0, LOG_LEVEL_TRACE);
-	}
+	t_log* logCPU = log_create(RUTA_DE_ARCHIVO_DE_LOGS_CPU, "CPU", 0, LOG_LEVEL_TRACE);
 	
 	//Inicializo contador de instrucciones ejecutados por cada CPU
-	asignarCantidadDeCPUsALista(hilosCPU.configuracionCPU);
+	asignarCantidadDeCPUsALista(configuracionCPU->cantidadDeHilos);
+
+	//Inicializo lista de tiempos de ejecucion de CPUs
+	asignarCantidadTiemposALista(configuracionCPU->cantidadDeHilos);
 
 	//Creo hilo de conexion master Planificador y continuo con el programa
 	pthread_t hiloConexionMasterPlanificador;
-	pthread_create(&hiloConexionMasterPlanificador, NULL, (void*)conexionMasterPlanificador, hilosCPU.configuracionCPU);
+	pthread_create(&hiloConexionMasterPlanificador, NULL, (void*)conexionMasterPlanificador, configuracionCPU);
 	sem_wait(&semaforoConexionMasterPlanificador);
 
 	//Creo hilo que reinicia el contador de instrucciones cada 1 minuto
 	pthread_t hiloResetearInstruccionesDeCPUs;
-	pthread_create(&hiloResetearInstruccionesDeCPUs, NULL, (void*)resetearInstruccionesDeCPUs, hilosCPU.configuracionCPU);
+	pthread_create(&hiloResetearInstruccionesDeCPUs, NULL, (void*)resetearInstruccionesDeCPUs, &(configuracionCPU->cantidadDeHilos));
 
 	//Crea tantos "CPUs" (hilos), especificado en el archivo de configuracion
-	pthread_t hiloCPU[hilosCPU.configuracionCPU->cantidadDeHilos];
+	pthread_t hiloCPU;
 
-//EN CASO DE EMERGENCIA ROMPA EL VIDRIO CON EL MARTILLO
-//inicioDeProceso = time(0);
-//EN CASO DE EMERGENCIA ROMPA EL VIDRIO CON EL MARTILLO
-
+	inicioDeProceso = time(0);
 
 	int i;
-	for(i = 0; i < hilosCPU.configuracionCPU->cantidadDeHilos; i++)
+	for(i = 1; i <= configuracionCPU->cantidadDeHilos; i++)
 	{
-		sem_wait(&semaforoHiloCPU);
-		pthread_create(&hiloCPU[i], NULL, (void*)unCPU, &hilosCPU);
+		//Declaro estructura que requiere un hilo de CPU (configuracion y logs)
+		t_datosCPU* datosCPU = malloc(sizeof(t_datosCPU));
+		(*datosCPU).idCPU = i;
+		datosCPU->configuracionCPU = configuracionCPU;
+		datosCPU->logCPU = logCPU;
+
+
+		datosCPU->socketParaPlanificador = crearSocket();
+		conectarAServidor(datosCPU->socketParaPlanificador, datosCPU->configuracionCPU->ipPlanificador, datosCPU->configuracionCPU->puertoPlanificador);
+
+		if(configuracionCPU->debug == 1)
+		{
+			printf(BLANCO "CPU id: " AZUL "%i " BLANCO "| " VERDE "CONECTADA " BLANCO "A " CELESTE "PLANIFICADOR" BLANCO ".\n" FINDETEXTO, datosCPU->idCPU);
+		}
+
+		datosCPU->socketParaMemoria = crearSocket();
+		conectarAServidor(datosCPU->socketParaMemoria, datosCPU->configuracionCPU->ipMemoria, datosCPU->configuracionCPU->puertoMemoria);
+
+		if(configuracionCPU->debug == 1)
+		{
+			printf(BLANCO "CPU id: " AZUL "%i " BLANCO "| " VERDE "CONECTADA " BLANCO "A " CELESTE "MEMORIA" BLANCO ".\n" FINDETEXTO, datosCPU->idCPU);
+		}
+
+		//Primer mensaje para planificador, diciendo que estoy online y me responde con el quantum, si quantum = 0 -> FIFO
+		enviarMensaje(datosCPU->socketParaPlanificador, &(datosCPU->idCPU), sizeof(datosCPU->idCPU));
+
+		if(configuracionCPU->debug == 1)
+		{
+			printf(BLANCO "CPU id: " AZUL "%i " BLANCO "| MENSAJE ENVIADO A " CELESTE "PLANIFICADOR " BLANCO "| CONTENIDO: " AMARILLO "%i" BLANCO ".\n" FINDETEXTO, datosCPU->idCPU, datosCPU->idCPU);
+		}
+
+		recibirMensajeCompleto(datosCPU->socketParaPlanificador, &(datosCPU->quantum), sizeof(int));
+
+
+		if(datosCPU->quantum == 0)
+		{
+			printf(BLANCO "CPU id: " AZUL "%i " VERDE "Iniciado" BLANCO ". Planificacion: " AMARILLO "FIFO" BLANCO ".\n" FINDETEXTO, datosCPU->idCPU);
+		}
+		else
+		{
+			printf(BLANCO "CPU id: " AZUL "%i " VERDE "Iniciado" BLANCO ". Planificacion: " AMARILLO "ROUND-ROBIN " BLANCO "(quantum: " AMARILLO "%i" BLANCO ").\n" FINDETEXTO, datosCPU->idCPU, datosCPU->quantum);
+		}
+
+		sem_wait(&semaforoLogs);
+		log_trace(datosCPU->logCPU, "CPU ID: %i CREADA Y CONECTADA A MEMORIA", datosCPU->idCPU);
+		sem_post(&semaforoLogs);
+
+		pthread_create(&hiloCPU, NULL, (void*)unCPU, datosCPU);
 	}
 
-	for(i = 0; i < hilosCPU.configuracionCPU->cantidadDeHilos; i++)
+
+
+	for(i = 0; i < configuracionCPU->cantidadDeHilos; i++)
 	{
-		pthread_join(hiloCPU[i], NULL);
+		pthread_join(hiloCPU, NULL);
 	}
 
 	return 0;
@@ -76,100 +122,36 @@ int main(void)
 
 
 //Hilo CPU
-void* unCPU(t_hiloCPU* hiloCPU)
+void* unCPU(t_datosCPU* datosCPU)
 {
-	//Parametros para crear un hilo de CPU: idCPU, archivoDeConfiguracion, archivoDeLogs, socketParaPlanificador, socketParaMemoria
-	t_datosCPU datosCPU;
-	
-
-	datosCPU.idCPU = idCPUAAsignar;
-	idCPUAAsignar++;
-
-
-	datosCPU.configuracionCPU = hiloCPU->configuracionCPU;
-	datosCPU.logCPU = hiloCPU->logCPU;
-
-	if(DEBUG == 1)
-	{
-		printf("idCPU: %i | HILO CPU CREADO\n", datosCPU.idCPU);
-	}
-
-	//Conexion a Planificador
-	datosCPU.socketParaPlanificador = crearSocket();
-	conectarAServidor(datosCPU.socketParaPlanificador, datosCPU.configuracionCPU->ipPlanificador, datosCPU.configuracionCPU->puertoPlanificador);
-
-	if(DEBUG == 1)
-	{
-		printf("idCPU: %i | CPU CONECTADA A PLANIFICADOR\n", datosCPU.idCPU);
-	}
-
-	//Conexion a Memoria
-	datosCPU.socketParaMemoria = crearSocket();
-	conectarAServidor(datosCPU.socketParaMemoria, datosCPU.configuracionCPU->ipMemoria, datosCPU.configuracionCPU->puertoMemoria);
-
-	if(DEBUG == 1)
-	{
-		printf("idCPU: %i | CPU CONECTADA A MEMORIA\n", datosCPU.idCPU);
-	}
-
-	//Primer mensaje para planificador, diciendo que estoy online y me responde con el quantum, si quantum = 0 -> FIFO
-	enviarMensaje(datosCPU.socketParaPlanificador, &datosCPU.idCPU, sizeof(datosCPU.idCPU));
-
-	if(DEBUG == 1)
-	{
-		printf("idCPU: %i | MENSAJE ENVIADO A PLANIFICADOR | idCPU: %i\n", datosCPU.idCPU, datosCPU.idCPU);
-	}
-
-	int quantum = 0;
-	recibirMensajeCompleto(datosCPU.socketParaPlanificador, &quantum, sizeof(int));
-
-	if(DEBUG == 1)
-	{
-		printf("idCPU: %i | QUANTUM RECIBIDO (0 = FIFO): %i\n", datosCPU.idCPU, quantum);
-	}
-
-	//LOG: CPU creada conectada/conectada
-	if(LOGS_ACTIVADOS == 1)
-	{
-		sem_wait(&semaforoLogs);
-		log_trace(datosCPU.logCPU, "CPU ID: %i CREADA Y CONECTADA A MEMORIA", datosCPU.idCPU);
-		sem_post(&semaforoLogs);
-	}
-
-	sem_post(&semaforoHiloCPU);
-
-	//Espero a recibir tarea del planificador
 	while(true)
 	{
-		tipoPCB* PCB = recibirPCB(datosCPU.socketParaPlanificador);
+		tipoPCB* PCB = recibirPCB(datosCPU->socketParaPlanificador);
 
 		sem_post(&semaforoCPUTrabajando);
 
-		if(DEBUG == 1)
+		if(datosCPU->configuracionCPU->debug == 1)
 		{
-			printf("idCPU: %i | PCB RECIBIDO: ", datosCPU.idCPU);
-			imprimirPCB(PCB);
+			printf(BLANCO "CPU id: " AZUL "%i " BLANCO "| PCB RECIBIDO: " FINDETEXTO, datosCPU->idCPU);
+			printf(BLANCO "RUTA: " AMARILLO "%s " BLANCO "| PID: " AMARILLO "%i " BLANCO "| INSTRUCTION POINTER: " AMARILLO "%i " BLANCO "| ESTADO: " AMARILLO "%c" BLANCO ".\n" FINDETEXTO, PCB->ruta, PCB->pid, PCB->insPointer, PCB->estado);
 		}
 
-		//LOG: CPU recibe PCB
-		if(LOGS_ACTIVADOS == 1)
+		if(datosCPU->quantum == 0)
 		{
 			sem_wait(&semaforoLogs);
-			if(quantum == 0)
-			{
-				log_trace(datosCPU.logCPU, "CPU ID: %i | PCB RECIBIDO | RUTA: %s | ESTADO: %c | PID: %i | INSPOINTER: %i | PLANIFICACION: FIFO", datosCPU.idCPU, PCB->ruta, PCB->estado, PCB->pid, PCB->insPointer);
-			}
-			else
-			{
-				log_trace(datosCPU.logCPU, "CPU ID: %i | PCB RECIBIDO | RUTA: %s | ESTADO: %c | PID: %i | INSPOINTER: %i | PLANIFICACION: ROUNDROBIN | QUANTUM: %i", datosCPU.idCPU, PCB->ruta, PCB->estado, PCB->pid, PCB->insPointer, quantum);
-			}
+			log_trace(datosCPU->logCPU, "CPU ID: %i | PCB RECIBIDO | RUTA: %s | ESTADO: %c | PID: %i | INSPOINTER: %i | PLANIFICACION: FIFO", datosCPU->idCPU, PCB->ruta, PCB->estado, PCB->pid, PCB->insPointer);
+			sem_post(&semaforoLogs);
+		}
+		else
+		{
+			sem_wait(&semaforoLogs);
+			log_trace(datosCPU->logCPU, "CPU ID: %i | PCB RECIBIDO | RUTA: %s | ESTADO: %c | PID: %i | INSPOINTER: %i | PLANIFICACION: ROUND-ROBIN | QUANTUM: %i", datosCPU->idCPU, PCB->ruta, PCB->estado, PCB->pid, PCB->insPointer, datosCPU->quantum);
 			sem_post(&semaforoLogs);
 		}
 
 		//Funcion principal que va a ejecutar el programa
-		ejecutarPrograma(PCB, quantum, &datosCPU);
+		ejecutarPrograma(PCB, datosCPU);
 	}
-
 	return 0;
 }
 
@@ -181,12 +163,12 @@ void* conexionMasterPlanificador(tipoConfigCPU* configuracionCPU)
 
 	sem_post(&semaforoConexionMasterPlanificador);
 
-	if(DEBUG == 1)
+	if(configuracionCPU->debug == 1)
 	{
-		printf("PROCESO CPU MASTER CONECTADO A PLANIFICADOR\n");
+		printf(BLANCO "CONEXION MASTER CON " CELESTE "PLANIFICADOR " VERDE "ESTABLECIDA" BLANCO ".\n" FINDETEXTO);
 	}
 
-	char instruccionDePlanificador;
+	char instruccionDePlanificador = '0';
 
 	int cantidadDeInstruccionesDeUnProceso = 0;
 	size_t tamanioDeRutaDePrograma;
@@ -196,43 +178,74 @@ void* conexionMasterPlanificador(tipoConfigCPU* configuracionCPU)
 	conectarAServidor(socketParaMemoria, configuracionCPU->ipMemoria, configuracionCPU->puertoMemoria);
 	tipoInstruccion instruccionAMemoria;
 
-	while(true)
+	char mensajeDeValidacionDeArchivo;
+
+	while(instruccionDePlanificador != FINALIZAR_PROCESO)
 	{
 		recibirMensajeCompleto(socketMasterPlanificador, &instruccionDePlanificador, sizeof(char));
+
+		if(instruccionDePlanificador == EXISTENCIA_DE_ARCHIVO)
+		{
+			recibirMensajeCompleto(socketMasterPlanificador, &tamanioDeRutaDePrograma, sizeof(size_t));
+			rutaDelPrograma = malloc(tamanioDeRutaDePrograma);
+			recibirMensajeCompleto(socketMasterPlanificador, rutaDelPrograma, tamanioDeRutaDePrograma);
+
+			if(configuracionCPU->debug == 1)
+			{
+				printf(BLANCO "VALIDAR EXISTENCIA DEL ARCHIVO: "  AMARILLO "%s " BLANCO "SOLICITADO POR " CELESTE "PLANIFICADOR" BLANCO ".\n" FINDETEXTO, rutaDelPrograma);
+			}
+
+			if(validarExistenciaDeArchivo(rutaDelPrograma) == 1)
+			{
+				mensajeDeValidacionDeArchivo = 'O';
+			}
+			else
+			{
+				mensajeDeValidacionDeArchivo = 'E';
+			}
+
+			enviarMensaje(socketMasterPlanificador, &mensajeDeValidacionDeArchivo, sizeof(mensajeDeValidacionDeArchivo));
+
+			if(configuracionCPU->debug == 1)
+			{
+				printf(BLANCO "VALIDAR EXISTENCIA DEL ARCHIVO: "  AMARILLO "%s " BLANCO "RESPUESTA ENVIADA A " CELESTE "PLANIFICADOR" BLANCO ":" AMARILLO "%c" BLANCO ".\n" FINDETEXTO, rutaDelPrograma, mensajeDeValidacionDeArchivo);
+			}
+			free(rutaDelPrograma);
+		}
 		if(instruccionDePlanificador == CANTIDAD_DE_INSTRUCCIONES_DE_UN_PROCESO)
 		{
 			recibirMensajeCompleto(socketMasterPlanificador, &tamanioDeRutaDePrograma, sizeof(size_t));
 			rutaDelPrograma = malloc(tamanioDeRutaDePrograma);
 			recibirMensajeCompleto(socketMasterPlanificador, rutaDelPrograma, tamanioDeRutaDePrograma);
 
-			if(DEBUG == 1)
+			if(configuracionCPU->debug == 1)
 			{
-				printf("CANTIDAD DE INSTRUCCIONES DEL PROCESO: %s SOLICITADO POR PLANIFICADOR\n", rutaDelPrograma);
+				printf(BLANCO "CANTIDAD DE INSTRUCCIONES DEL PROCESO: " AMARILLO "%s " BLANCO "SOLICITADO POR " CELESTE "PLANIFICADOR" BLANCO ".\n" FINDETEXTO, rutaDelPrograma);
 			}
 
 			cantidadDeInstruccionesDeUnProceso = cantidadDeInstrucciones(rutaDelPrograma);
 			enviarMensaje(socketMasterPlanificador, &cantidadDeInstruccionesDeUnProceso, sizeof(cantidadDeInstruccionesDeUnProceso));
 			free(rutaDelPrograma);
-			if(DEBUG == 1)
+			if(configuracionCPU->debug == 1)
 			{
-				printf("CANTIDAD DE INSTRUCCIONES DEL PROCESO: %s (CANTIDAD: %i) ENVIADO A PLANIFICADOR\n", rutaDelPrograma, cantidadDeInstruccionesDeUnProceso);
+				printf(BLANCO "CANTIDAD DE INSTRUCCIONES DEL PROCESO: " AMARILLO "%s " BLANCO "(CANTIDAD: " AMARILLO "%i" BLANCO ") ENVIADO A " CELESTE "PLANIFICADOR" BLANCO ".\n" FINDETEXTO, rutaDelPrograma, cantidadDeInstruccionesDeUnProceso);
 			}
 		}
 
 		if(instruccionDePlanificador == PORCENTAJE_DE_USO_DEL_CPU)
 		{
-			if(DEBUG == 1)
+			if(configuracionCPU->debug == 1)
 			{
-				printf("PORCENTAJE DE USO DEL CPU SOLICITADO POR PLANIFICADOR\n");
+				printf(BLANCO "PORCENTAJE DE USO DEL CPU SOLICITADO POR " CELESTE "PLANIFICADOR" BLANCO ".\n" FINDETEXTO);
 			}
 			enviarPorcentajeDeUso(socketMasterPlanificador, configuracionCPU);
 		}
 
 		if(instruccionDePlanificador == FINALIZAR_CPU)
 		{
-			if(DEBUG == 1)
+			if(configuracionCPU->debug == 1)
 			{
-				printf("PROCESO PLANIFICADOR FINALIZA\n");
+				printf(BLANCO "MENSAJE RECIBIDO DE " CELESTE "PLANIFICADOR" BLANCO ": " ROJO "FINALIZAR TODOS LOS PROCESOS" BLANCO ".\n" FINDETEXTO);
 			}
 			instruccionAMemoria.pid = 0;
 			instruccionAMemoria.instruccion = FINALIZAR_PROCESO;
@@ -240,9 +253,9 @@ void* conexionMasterPlanificador(tipoConfigCPU* configuracionCPU)
 			instruccionAMemoria.texto = string_duplicate("(null)");
 			enviarInstruccion(socketParaMemoria, &instruccionAMemoria);
 
-			if(DEBUG == 1)
+			if(configuracionCPU->debug == 1)
 			{
-				printf("INSTRUCCION ENVIADA A MEMORIA | pID: %i | instruccion: %c | numeroDePagina: %i | texto: %s\n", instruccionAMemoria.pid, instruccionAMemoria.instruccion, instruccionAMemoria.nroPagina, instruccionAMemoria.texto);
+				printf(BLANCO "INSTRUCCION ENVIADA A " CELESTE "MEMORIA " BLANCO "| PID: " AMARILLO "%i " BLANCO "| INSTRUCCION: " AMARILLO "%c " BLANCO "| NUMERO DE PAGINA: " AMARILLO "%i " BLANCO "| TEXTO: " AMARILLO "%s" BLANCO ".\n" FINDETEXTO, instruccionAMemoria.pid, instruccionAMemoria.instruccion, instruccionAMemoria.nroPagina, instruccionAMemoria.texto);
 			}
 			
 			tipoRespuesta* respuestaDeMemoria = recibirRespuesta(socketParaMemoria);
@@ -252,30 +265,34 @@ void* conexionMasterPlanificador(tipoConfigCPU* configuracionCPU)
 				enviarRespuesta(socketMasterPlanificador, respuestaDeMemoria);
 				destruirTipoRespuesta(respuestaDeMemoria);
 				list_destroy(cantidadDeInstruccionesEjecutadasPorCPUs);
+				list_destroy(listaTiemposCPU);
 				sem_destroy(&semaforoConexionMasterPlanificador);
-				sem_destroy(&semaforoHiloCPU);
 				sem_destroy(&semaforoLogs);
 				sem_destroy(&semaforoInstruccionesCPU);
 				sem_destroy(&semaforoCPUTrabajando);
 				sem_destroy(&semaforoContadorDeInstrucciones);
+				sem_destroy(&semaforoTiemposDeUso);
 				liberarSocket(socketMasterPlanificador);
 				liberarSocket(socketParaMemoria);
-				printf("Proceso CPU Finalizado.\n");
+				printf(BLANCO "\nProceso CPU " ROJO "Finalizado" BLANCO ".\n" FINDETEXTO);
 				exit(EXIT_SUCCESS);
 			}
 		}
 	}
+	return 0;
 }
 
 
 //Hilo que reinicia el contador de instrucciones a 0 cada un minuto
-void* resetearInstruccionesDeCPUs(tipoConfigCPU* configuracionCPU)
+void* resetearInstruccionesDeCPUs(int* cantidadDeCPUs)
 {
 	sem_wait(&semaforoCPUTrabajando);
 	while(true)
 	{
 		sleep(60);
-		reiniciarCantidadDeInstrucciones(configuracionCPU);
+		inicioDeProceso = time(0);
+		reiniciarCantidadDeInstrucciones(*cantidadDeCPUs);
 	}
+	return 0;
 }
 

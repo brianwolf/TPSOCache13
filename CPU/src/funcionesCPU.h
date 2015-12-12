@@ -15,21 +15,12 @@
 #include <commonsDeAsedio/configuracion.h>
 #include <pthread.h>
 #include <semaphore.h>
-
-
-//EN CASO DE EMERGENCIA ROMPA EL VIDRIO CON EL MARTILLO
-#define SEG_A_MICROSEG 1000000
-//#include <time.h>
-//time_t inicioDeProceso;
-//time_t finDeProceso;
-//EN CASO DE EMERGENCIA ROMPA EL VIDRIO CON EL MARTILLO
+#include <time.h>
 
 
 /**********Configuracion Inicial del CPU**********/
 #define RUTA_DE_ARCHIVO_DE_CONFIGURACION_CPU "cfgCPU"
 #define RUTA_DE_ARCHIVO_DE_LOGS_CPU "logsCPU"
-#define LOGS_ACTIVADOS 1
-#define DEBUG 0
 /**********Fin de configuracion Inicial del CPU**********/
 
 
@@ -40,6 +31,7 @@
 /**********Fin de Definiciones de CPU**********/
 
 /**********Definiciones de Instrucciones de Planificador**********/
+#define EXISTENCIA_DE_ARCHIVO 'A'
 #define CANTIDAD_DE_INSTRUCCIONES_DE_UN_PROCESO 'C'
 #define PORCENTAJE_DE_USO_DEL_CPU '%'
 #define FINALIZAR_CPU 'S'
@@ -53,6 +45,8 @@
 #define PUERTO_MEMORIA "PUERTO_MEMORIA"
 #define CANTIDAD_HILOS "CANTIDAD_HILOS"
 #define RETARDO "RETARDO"
+#define METODO_PORCENTAJE_DE_USO "METODO_PORCENTAJE_DE_USO"
+#define DEBUG "DEBUG"
 
 typedef struct{
 	char* ipPlanificador;
@@ -61,6 +55,8 @@ typedef struct{
 	int puertoMemoria;
 	int cantidadDeHilos;
 	int retardo;
+	int metodoPorcentajeDeUso;
+	int debug;
 }tipoConfigCPU;
 
 tipoConfigCPU* cargarArchivoDeConfiguracionDeCPU(char* rutaDelArchivoDeConfiguracionDelCPU);
@@ -72,26 +68,29 @@ void destruirConfigCPU(tipoConfigCPU* estructuraDeConfiguracion);
 
 
 /**********Semaforos del CPU**********/
-sem_t semaforoHiloCPU;
 sem_t semaforoConexionMasterPlanificador;
 sem_t semaforoLogs;
 sem_t semaforoInstruccionesCPU;
 sem_t semaforoCPUTrabajando;
 sem_t semaforoContadorDeInstrucciones;
+sem_t semaforoTiemposDeUso;
 /**********Fin de Semaforos Inicial del CPU**********/
 
 /**********Lista de Instrucciones finalizadas de cada CPU**********/
 t_list* cantidadDeInstruccionesEjecutadasPorCPUs;
 /**********Fin de Lista de Instrucciones finalizadas de cada CPU**********/
 
+/**********Lista de Tiempos de Instrucciones de cada CPU**********/
+t_list* listaTiemposCPU;
+/**********Fin de Lista de Tiempos de Instrucciones de cada CPU**********/
+
+/**********Timers de CPU**********/
+time_t inicioDeProceso;
+time_t finDeProceso;
+/**********Fin de Timers de CPU**********/
+
 
 /**********Estructuras del CPU**********/
-/*Estructura Hilo CPU*/
-typedef struct{
-	tipoConfigCPU* configuracionCPU;
-	t_log* logCPU;
-}t_hiloCPU;
-
 /*Estructura de datos del CPU*/
 typedef struct{
 	int idCPU;
@@ -99,6 +98,7 @@ typedef struct{
 	t_log* logCPU;
 	int socketParaPlanificador;
 	int socketParaMemoria;
+	int quantum;
 }t_datosCPU;
 
 /*Estructura Instruccion a Memoria*/
@@ -113,23 +113,29 @@ typedef struct respuestaDeInstruccion{
 	int tipoDeSalida; //(0 = continua ejecucion | 1 = termina ejecucion mantiene insPointer | 2 = termina ejecucion aumenta insPointer)
 	char* respuesta;
 }tipoRepuestaDeInstruccion;
+
+/*Estructura de tiempos de uso de CPU*/
+typedef struct{
+	time_t inicio;
+	time_t fin;
+	double tiempoEjecutando;
+}tipoTiempoCPU;
 /**********Fin de Estructuras del CPU**********/
-
-
 
 /**********Funciones del CPU**********/
 /*Hilo CPU, se conecta con Planificador y Memoria, espera PCBs y los ejecuta*/
-void* unCPU(t_hiloCPU*);
+void* unCPU(t_datosCPU*);
 
 /*Hilo de conexion master con Planificador que atiende solicitudes de porcentaje de uso, cantidad de instrucciones y finalizar*/
 void* conexionMasterPlanificador(tipoConfigCPU* configuracionCPU);
 
 /*Hilo que reinicia los contadores de instrucciones ejecutadas por los hilos CPU cada un minuto*/
-void* resetearInstruccionesDeCPUs(tipoConfigCPU* configuracionCPU);
+void* resetearInstruccionesDeCPUs(int* cantidadDeCPUs);
 
+int validarExistenciaDeArchivo(char* rutaDelArchivo);
 FILE* abrirProgramaParaLectura(char* rutaDelPrograma);
 int longitudDeStringArray(char** stringArray);
-void ejecutarPrograma(tipoPCB *PCB, int quantum, t_datosCPU* datosCPU);
+void ejecutarPrograma(tipoPCB *PCB, t_datosCPU* datosCPU);
 t_instruccion extraerInstruccion(char* instruccion);
 tipoRepuestaDeInstruccion ejecutarInstruccion(char* lineaDeInstruccion, int idDeProceso, t_datosCPU* datosCPU);
 tipoRespuesta* enviarInstruccionAMemoria(int idDeProceso, char instruccion, int numeroDePagina, char* texto, t_datosCPU* datosCPU);
@@ -155,9 +161,13 @@ int cantidadDeInstrucciones(char* rutaDelPrograma);
 void enviarPorcentajeDeUso(int socketMasterPlanificador, tipoConfigCPU* configuracionCPU);
 
 /*Funciones de Porcentaje de Uso*/
-void asignarCantidadDeCPUsALista(tipoConfigCPU* configuracionCPU);
+void asignarCantidadDeCPUsALista(int cantidadDeCPUs);
 void aumentarCantidadDeInstruccionesEjecutadasEnUno(int idCPU);
-void reiniciarCantidadDeInstrucciones(tipoConfigCPU* configuracionCPU);
+void reiniciarCantidadDeInstrucciones(int cantidadDeCPUS);
+
+void asignarCantidadTiemposALista(int cantidadDeCPUs);
+void actualizarTiempoInicio(int idCPU);
+void actualizarTiempoFin(int idCPU);
 /**********Fin de Funciones del CPU**********/
 
 #endif /* FUNCIONESCPU_H_ */

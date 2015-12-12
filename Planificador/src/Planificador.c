@@ -80,7 +80,7 @@ void conectar_maestroCPU(){
 
 	asociarAPuerto(socketEscucha,puerto);
 
-	printf("\n\n    ********* Esperando a que cpu se conecte.. \n\n");
+	printf(BLANCO "\n\n             Esperando Conexion de CPU...\n\n" FINDETEXTO);
 
 	// me pongo a escuchar conexiones
 	escucharConexiones(socketEscucha,5); //se bloquea hasta q haya cpus nuevas
@@ -112,7 +112,7 @@ int main(void) {
 
 	liberar_memoria();
 
-	printf("fin =) ");
+	printf(BLANCO "Procesos " ROJO "Finalizados " AZUL "=)\n" FINDETEXTO);
 	return 0;
 }
 
@@ -126,31 +126,46 @@ int correr_path(void){
   //limpiar pantalla
 	//system("clear");
 
-	printf("Ingresar Comando: \n");
 
-	scanf("%s", path); // supongo que siempre es un comando valido y path tambien
+	printf(BLANCO "Ingresar nombre del mcod: \n" FINDETEXTO);
 
-	contador_de_id_procesos++; // mantengo la cuenta de todos los procesos que se crearon en el sistema
+	scanf("%s", path);
 
-	pthread_mutex_lock(&pcbs);
-	// Agrego el elemento al final de la lista (para que quede ordenada por ID)
-	list_add(lista_de_PCB, PCB_create(contador_de_id_procesos, 1, 'R', path, time(NULL), time(NULL)));
+	//FERNILANDIA
+	char mensajeParaPreguntarExistenciaDeArchivo = 'A';
+	enviarMensaje(socketMaestro, &mensajeParaPreguntarExistenciaDeArchivo, sizeof(mensajeParaPreguntarExistenciaDeArchivo));
+	size_t tamanioPath = strlen(path) + sizeof(char);
+	enviarMensaje(socketMaestro, &tamanioPath, sizeof(tamanioPath));
+	enviarMensaje(socketMaestro, path, tamanioPath);
 
-	pthread_mutex_unlock(&pcbs);
+	char existenciaDeArchivo = 'Z';
+	recibirMensajeCompleto(socketMaestro, &existenciaDeArchivo, sizeof(char));
 
-	pthread_mutex_lock(&ready);
-	// agrego la id a lo ultimo de la cola
-	queue_push(procesos_en_ready,id_create(contador_de_id_procesos));
+	if(existenciaDeArchivo == 'E'){
+		printf(ROJO "ERROR" BLANCO ": No existe el mcod ingresado.\n" FINDETEXTO);
+	}
+	//FIN DE FERNILANDIA
+	else{
+		contador_de_id_procesos++; // mantengo la cuenta de todos los procesos que se crearon en el sistema
 
-	pthread_mutex_unlock(&ready);
+		pthread_mutex_lock(&pcbs);
+		// Agrego el elemento al final de la lista (para que quede ordenada por ID)
+		list_add(lista_de_PCB, PCB_create(contador_de_id_procesos, 1, 'R', path, time(NULL), time(NULL)));
 
-	printf("Proceso %s en ejecucion....\n", path);
+		pthread_mutex_unlock(&pcbs);
 
-	log_trace(proceso, "              INICIO --> ID_mproc: %d , nombre: %s ",contador_de_id_procesos, path);
+		pthread_mutex_lock(&ready);
+		// agrego la id a lo ultimo de la cola
+		queue_push(procesos_en_ready,id_create(contador_de_id_procesos));
 
-	sem_post(&solicitud_ejecucion);
+		pthread_mutex_unlock(&ready);
 
+		printf("Proceso %s en ejecucion....\n", path);
 
+		log_trace(proceso, "              INICIO --> ID_mproc: %d , nombre: %s ",contador_de_id_procesos, path);
+
+		sem_post(&solicitud_ejecucion);
+	}
 	//sleep(1);
 
 	return 0;
@@ -508,27 +523,27 @@ int menu(void) {
 		opcion = 0;
 
 
-		    printf("############################################# L ##################\n");
-			printf("################################################################\n");
-			printf("##     --------> *****                  ***** <------------   ##\n");
-			printf("##   *****             LOS  JAVIMANCOS         ***** -------  ##\n");
-			printf("##------------------------------------------------------------##\n");
-			printf("##                                                            ##\n");
-			printf("##      Ingrese una opción para continuar:                    ##\n");
-			printf("##                                                            ##\n");
-			printf("##                                                            ##\n");
-			printf("##          1) Correr Path                                    ##\n");
-			printf("##                                                            ##\n");
-			printf("##          2) Finalizar PID                                  ##\n");
-			printf("##                                                            ##\n");
-			printf("##          3) ps                                             ##\n");
-			printf("##                                                            ##\n");
-			printf("##          4) cpu                                            ##\n");
-			printf("##                                                            ##\n");
-			printf("##          5) Salir                                          ##\n");
-			printf("##                                                            ##\n");
-			printf("################################################################\n");
-			printf("################################################################\n\n\n");
+		    printf(ROSA"################################################################\n"FINDETEXTO);
+			printf(ROSA"################################################################\n"FINDETEXTO);
+			printf(ROSA"##     --------> *****                  ***** <------------   ##\n"FINDETEXTO);
+			printf(ROSA"##   *****             "CELESTE "LOS  JAVIMANCOS" ROSA"         ***** -------  ##\n"FINDETEXTO);
+			printf(ROSA"##------------------------------------------------------------##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"##"  BLANCO "        Ingrese una opción para continuar:" ROSA"                  ##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"##"  BLANCO  "           1) Correr Path"                 ROSA "                                   ##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"##"  BLANCO  "           2) Finalizar PID"               ROSA "                                 ##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"##"  BLANCO  "           3) ps"                          ROSA "                                            ##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"##"  BLANCO  "           4) cpu"                         ROSA "                                           ##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"##"  BLANCO  "           5) Salir"                       ROSA "                                         ##\n"FINDETEXTO);
+			printf(ROSA"##                                                            ##\n"FINDETEXTO);
+			printf(ROSA"################################################################\n"FINDETEXTO);
+			printf(ROSA"################################################################\n\n\n"FINDETEXTO);
 
 			scanf("%s", opchar);
 
@@ -565,7 +580,7 @@ int menu(void) {
 
 				break;
 
-			default: printf("Opción incorrecta. Por favor ingrese una opción del 1 al 4 \n \n \n"); break;
+			default: printf(ROJO "ERROR" BLANCO ": Ingrese una opcion del " VERDE "1 " BLANCO "al " VERDE "5 \n \n \n" FINDETEXTO); break;
 		  }
 
 	}
@@ -574,22 +589,36 @@ int menu(void) {
 
 }
 
-void finalizar_PID(){
+int finalizar_PID(){
 
 	char mensajito = 'C';
 	int ultima; // cantidad de instrucciones
 	int id;
+	char timer[10];
 
 	t_PCB *nodo_pcb;
 
-	printf("\n   Ingrese el ID_mProc que desea finalizar: \n\n");
+	printf(BLANCO "\n   Ingrese el ID_mProc que desea finalizar: \n\n" FINDETEXTO);
 
 	scanf("%d",&id);
 
+	pthread_mutex_lock(&pcbs);
+
+
+	if( ! (estas_finalizado(lista_de_PCB, id)) ){ // si no esta en la lista entra al if
+
+		pthread_mutex_unlock(&pcbs);
+
+		printf("\n" ROJO "ERROR" BLANCO ": No se pudo encontrar el ID del proceso ingresado\n\n" FINDETEXTO);
+
+		scanf("%s",timer);
+
+		return 0;
+	}
+
+
 	enviarMensaje(socketMaestro,&mensajito,sizeof(char)); // le mando el quantum, que es un int
 
-
-	pthread_mutex_lock(&pcbs);
 
 	nodo_pcb = buscar_PCB(lista_de_PCB, id); //PCB=buscar_id_de_proceso (sin desarmar la lista)
 
@@ -609,7 +638,7 @@ void finalizar_PID(){
 
 	pthread_mutex_unlock(&pcbs);
 
-
+	return 0;
 }
 
 void ps(){
@@ -627,12 +656,21 @@ void ps(){
 	for(i = 0; i < tamano; i++) {
 
 		PCB =list_get(lista_de_PCB, i);
-		printf("mProc %d: %s --> %c \n", PCB->id,PCB->path,PCB->estado);
+		printf(BLANCO "mProc " AZUL "%d" BLANCO": %s --> ", PCB->id,PCB->path);
+		if(PCB->estado == 'B'){
+			printf(AMARILLO "BLOQUEADO" BLANCO ".\n" FINDETEXTO);
+		}
+		if(PCB->estado == 'R'){
+			printf(BLANCO "LISTO.\n" FINDETEXTO);
+		}
+		if(PCB->estado == 'E'){
+			printf(VERDE "EN EJECUCION" BLANCO ".\n" FINDETEXTO);
+		}
 	}
 
 	pthread_mutex_unlock(&pcbs);
 
-	printf("\n   Ingrese un caracter y presione enter para volver al menu \n\n");
+	printf(BLANCO "\n   Ingrese un caracter y presione enter para volver al menu \n\n" FINDETEXTO);
 
 	scanf("%s",timer);
 }
@@ -663,7 +701,20 @@ void cpu(){
 
 		recibirMensajeCompleto(socketMaestro, &porcentaje, sizeof(int));// recibo los porcentajes
 
-		printf("ID_CPU: %d --> %d %% \n", contador, porcentaje);
+		printf(BLANCO "ID_CPU: " AZUL "%d " BLANCO "--> ", contador);
+
+		if(porcentaje < 40){
+			printf(VERDE "%d" BLANCO "%%\n" FINDETEXTO, porcentaje);
+		}
+		else{
+			if(porcentaje >= 40 && porcentaje < 70){
+				printf(AMARILLO "%d" BLANCO "%%\n" FINDETEXTO, porcentaje);
+			}
+			else{
+				printf(ROJO "%d" BLANCO "%%\n" FINDETEXTO, porcentaje);
+			}
+		}
+
 
 		contador++;
 
@@ -817,22 +868,22 @@ void configurar(){
 
 void logueo(){
 
-	colita = log_create("cola de ready", "PLANIFICADOR", 0, LOG_LEVEL_TRACE);
+	colita = log_create("logColaDeReady", "PLANIFICADOR", 0, LOG_LEVEL_TRACE);
 	log_trace(colita, "         \n\n       ");
 
-	proceso = log_create("comienzo y fin de mproc", "PLANIFICADOR", 0, LOG_LEVEL_TRACE);
+	proceso = log_create("logComienzoYFinDeMproc", "PLANIFICADOR", 0, LOG_LEVEL_TRACE);
 	log_trace(proceso, " \n\n ");
 
 
-	conexiones = log_create("actividad CPUs", "PLANIFICADOR", 0, LOG_LEVEL_TRACE);
+	conexiones = log_create("logActividadDeCPUs", "PLANIFICADOR", 0, LOG_LEVEL_TRACE);
 	log_trace(conexiones, "        \n\n      ");
 
 
-	rafagas = log_create("resultado de Ráfagas", "PLANIFICADOR", 0, LOG_LEVEL_INFO);
+	rafagas = log_create("logResultadosDeRafagas", "PLANIFICADOR", 0, LOG_LEVEL_INFO);
 	log_info(rafagas, "\n\n");
 
 
-	metricas = log_create(" metricas ", "PLANIFICADOR", 0, LOG_LEVEL_INFO);
+	metricas = log_create("logMetricas", "PLANIFICADOR", 0, LOG_LEVEL_INFO);
 	log_info(metricas, "     \n\n   ");
 
 
